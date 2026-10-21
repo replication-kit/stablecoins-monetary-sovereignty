@@ -1,5 +1,7 @@
-import numpy as np
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Figure 1 for:
@@ -13,7 +15,11 @@ import matplotlib.pyplot as plt
 # Solid branches are locally stable; the dashed branch is locally unstable.
 
 
-alpha = 6.0
+ALPHA = 6.0
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = REPO_ROOT / "figures"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def F(y):
@@ -22,24 +28,13 @@ def F(y):
 
 
 def z_of_y(y):
-    """
-    Parametric representation of the equilibrium locus.
-
-    Equilibrium:
-        x = F(z + alpha*x)
-
-    Let y = z + alpha*x and x = F(y). Then:
-        z = y - alpha*F(y)
-    """
-    return y - alpha * F(y)
+    """Return z in the parametric equilibrium representation."""
+    return y - ALPHA * F(y)
 
 
-# Turning points satisfy:
-#     alpha * f(y) = 1
-# For the standard logistic distribution,
-#     f(y) = F(y) * (1 - F(y)).
-# Let q = F(y). Then alpha*q*(1-q) = 1.
-disc = 1.0 - 4.0 / alpha
+# Turning points satisfy ALPHA * f(y) = 1.
+# For the standard logistic distribution, f(y) = F(y) * (1 - F(y)).
+disc = 1.0 - 4.0 / ALPHA
 q_low = (1.0 - np.sqrt(disc)) / 2.0
 q_high = (1.0 + np.sqrt(disc)) / 2.0
 
@@ -123,7 +118,7 @@ ax.grid(False)
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 
-# Place z-underbar and z-bar at the same vertical level as numeric tick labels.
+# Place the critical-value labels at the same level as numeric tick labels.
 default_ticks = [
     t for t in ax.get_xticks()
     if ax.get_xlim()[0] <= t <= ax.get_xlim()[1]
@@ -150,18 +145,15 @@ for t in all_ticks:
 ax.set_xticks(all_ticks)
 ax.set_xticklabels(tick_labels)
 
-
-# Output
 fig.subplots_adjust(bottom=0.17)
 
 fig.savefig(
-    "figure1_multiple_equilibria_bw_v4.png",
+    OUTPUT_DIR / "figure1_multiple_equilibria_bw_v4.png",
     dpi=300,
     bbox_inches="tight",
 )
-
 fig.savefig(
-    "figure1_multiple_equilibria_bw_v4.eps",
+    OUTPUT_DIR / "figure1_multiple_equilibria_bw_v4.eps",
     format="eps",
     bbox_inches="tight",
 )
